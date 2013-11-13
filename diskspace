@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Sends and alert email if the available space on a partition is less than theshold. 
+#
+# usage: diskspace [partition] [treshold]
+# Crontab example (sends alert if /dev/sda1 has less than 50GB free):
+# 0 0 * * * root /usr/local/sbin/diskspace /dev/sda1 50
+
+DISK=$1 #partition, greppable from df is enough
+TRESHOLD=$2 # Treshold in GB to send warning mail
+HOST=`hostname -f`
+MAIL_TO=`cat /etc/scriptmail.txt`
+# df -k gives KB instead of blocks, P for POSIX output
+FREE=`df -kP |grep $DISK|awk '{print $4}'`
+TOTAL=`df -hP |grep $DISK|awk '{print $2}'`
+DF_OUTPUT=`df -hP`
+GB=`echo $FREE / 1048576 | bc`
+
+if [ "$GB" -lt "$TRESHOLD" ]; then
+   MESSAGE="Disk $DISK on $HOST has only ${GB}G of $TOTAL free 
+
+$DF_OUTPUT"
+#   echo "$MESSAGE" 
+   echo "$MESSAGE" | /usr/bin/mail -s "Diskspace WARNING on $HOSTNAME" "$MAIL_TO"
+fi
+
