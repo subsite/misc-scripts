@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Run as postgres
+# USAGE: db_backup [database] [user] [dest path/filename]
+# CRON EXAMPLE: 
+# 00 01 * * * postgres      /usr/local/sbin/db_backup mydb myuser /var/db_backup/mydb_daily.pgdump
+
+if [ $# -ne 3 ]
+then
+	echo "USAGE: db_backup [database] [user] [dest path/filename]"
+	exit
+fi
+
+DATABASE=$1
+USER=$2
+PGPORT=`pg_lsclusters | grep online |awk '{print $3}'`
+DUMPFILE="$3"
+DUMPSTRING="pg_dump --host localhost --port $PGPORT --username $USER --format custom --blobs --verbose --file $DUMPFILE $DATABASE"
+echo $DUMPSTRING
+
+$DUMPSTRING
+
