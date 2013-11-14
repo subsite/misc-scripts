@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# Dump script for PostgreSQL databases, Fredrik Welander 2013
+#
 # Run as postgres
 # USAGE: db_backup [database] [user] [dest path/filename]
 # CRON EXAMPLE: 
