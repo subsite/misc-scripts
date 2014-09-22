@@ -29,7 +29,15 @@ git diff --quiet || { echo "ERROR: Dirty state. Exiting."; exit 1; }
 cd $PRODUCTION_REPO
 git diff --quiet || { echo "ERROR: Dirty state in production repository $PRODUCTION_REPO. Exiting."; exit 1; }
 cd $DEVEL_REPO
+UNPUSHED=`git cherry -v`
+if [[ -z $UNPUSHED ]]
+then
+        echo "No commits to push.";
+        exit 0;
+fi
 
+echo "Unpushed commits:"
+git cherry -v
 read -p "Push/pull $DEVEL_REPO(master)=>$PRODUCTION_REPO(master)? (Enter/Ctrl-C)"
 
 echo "PUSHING from $DEVEL_REPO..."
