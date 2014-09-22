@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Script for doing quick push-pull from a devel repository to a production repoistory 
+# in the same root on the same webserver
+# E.g. push-pull /var/www/website_devel to /var/www/website
+
+DEVEL_SUFFIX="_devel"
+GITBRANCH="master"
+
+#####
+DEVEL_REPO=`pwd`
+PRODUCTION_REPO=${DEVEL_REPO%$DEVEL_SUFFIX}
+
+if [[ ! "$DEVEL_REPO" == *$DEVEL_SUFFIX ]] 
+then 
+	echo "ERROR: Not in devel directory. Exiting."
+	exit 1;
+elif [[ ! -d  $PRODUCTION_REPO ]]
+then
+	echo "ERROR: Production repository in $PRODUCTION_REPO not found. Exiting";
+        exit 1;
+elif  [[ ! -d "${DEVEL_REPO}/.git" ]] || [[ ! -d "${PRODUCTION_REPO}/.git" ]]
+then
+        echo "ERROR: Not a git repository. Exiting."
+        exit 1;
+fi
+
+git diff --quiet || { echo "ERROR: Dirty state. Exiting."; exit 1; }
+cd $PRODUCTION_REPO
+git diff --quiet || { echo "ERROR: Dirty state in production repository $PRODUCTION_REPO. Exiting."; exit 1; }
+cd $DEVEL_REPO
+
+read -p "Push/pull $DEVEL_REPO(master)=>$PRODUCTION_REPO(master)? (Enter/Ctrl-C)"
+
+echo "PUSHING from $DEVEL_REPO..."
+git checkout $GITBRANCH
+git push
+cd $PRODUCTION_REPO
+echo "PULLING to $PRODUCTION_REPO..."
+git checkout $GITBRANCH
+git pull
+cd $DEVEL_REPO
