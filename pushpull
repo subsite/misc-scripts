@@ -5,25 +5,36 @@
 # Saves you the trouble of doing 'git push [wait], cd ../website, git pull [wait], cd ../website_devel. 
 # Includes basic checking for correct path, dirty-state and unpushed commits. 
 
+# Last part of development directory name
 DEVEL_SUFFIX="_devel"
+
+# Working branch (both devel and production)
 GITBRANCH="master"
 
-#####
+#############
 DEVEL_REPO=`pwd`
 PRODUCTION_REPO=${DEVEL_REPO%$DEVEL_SUFFIX}
+CUR_BRANCH=`git symbolic-ref --short HEAD`
 
-if [[ ! "$DEVEL_REPO" == *$DEVEL_SUFFIX ]] 
-then 
+if [[ ! "$DEVEL_REPO" == *$DEVEL_SUFFIX ]]
+then
 	echo "ERROR: Not in devel directory. Exiting."
-	exit 1;
+	exit 1
 elif [[ ! -d  $PRODUCTION_REPO ]]
 then
-	echo "ERROR: Production repository in $PRODUCTION_REPO not found. Exiting";
-        exit 1;
+	echo "ERROR: Production repository in $PRODUCTION_REPO not found. Exiting"
+        exit 1
 elif  [[ ! -d "${DEVEL_REPO}/.git" ]] || [[ ! -d "${PRODUCTION_REPO}/.git" ]]
 then
         echo "ERROR: Not a git repository. Exiting."
-        exit 1;
+        exit 1
+fi
+
+if [[ "$CUR_BRANCH" != "$GITBRANCH" ]]
+then
+        read -p "Current branch is '$CUR_BRANCH'. Checkout '$GITBRANCH' and exit?. (Enter/Ctrl-C)"
+	git checkout $GITBRANCH
+	exit 0
 fi
 
 git diff --quiet || { echo "ERROR: Dirty state. Exiting."; exit 1; }
@@ -33,8 +44,8 @@ cd $DEVEL_REPO
 UNPUSHED=`git cherry -v`
 if [[ -z $UNPUSHED ]]
 then
-        echo "No commits to push.";
-        exit 0;
+        echo "No commits to push."
+        exit 0
 fi
 
 echo "Unpushed commits:
@@ -50,4 +61,5 @@ echo "PULLING to $PRODUCTION_REPO..."
 git checkout $GITBRANCH
 git pull
 cd $DEVEL_REPO
-exit 0;
+exit 0
+
