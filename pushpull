@@ -11,6 +11,7 @@ GITBRANCH="master"
 #####
 DEVEL_REPO=`pwd`
 PRODUCTION_REPO=${DEVEL_REPO%$DEVEL_SUFFIX}
+CUR_BRANCH=`git symbolic-ref --short HEAD`
 
 if [[ ! "$DEVEL_REPO" == *$DEVEL_SUFFIX ]] 
 then 
@@ -25,6 +26,15 @@ then
         echo "ERROR: Not a git repository. Exiting."
         exit 1;
 fi
+
+if [[ "$CUR_BRANCH" != "$GITBRANCH" ]]
+then
+        read -p "Current branch is '$CUR_BRANCH'. Checkout '$GITBRANCH' and exit?. (Enter/Ctrl-C)"
+	git checkout $GITBRANCH
+	exit 0;
+fi
+
+
 
 git diff --quiet || { echo "ERROR: Dirty state. Exiting."; exit 1; }
 cd $PRODUCTION_REPO
