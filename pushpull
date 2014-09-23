@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Script for doing quick push-pull from a devel repository to a 
+# Script for doing a quick push-pull operation from a devel repository to a 
 # production repoistory. Both repositories must be in the same rootpath on the same webserver.
 # Saves you the trouble of doing 'git push [wait], cd ../website, git pull [wait], cd ../website_devel. 
-# Includes basic checking for correct path, dirty-state and unpushed commits. 
+# Includes basic checking for correct path and branch, dirty-state and unpushed commits. 
 
 # Last part of development directory name
 DEVEL_SUFFIX="_devel"
