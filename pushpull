@@ -45,8 +45,9 @@ then
 fi
 
 
+# Commented - allow pushing from dirty devel
+#git diff --quiet || { echo "ERROR: Dirty state. Exiting."; exit 1; }
 
-git diff --quiet || { echo "ERROR: Dirty state. Exiting."; exit 1; }
 cd $PRODUCTION_REPO
 git diff --quiet || { echo "ERROR: Dirty state in production repository $PRODUCTION_REPO. Exiting."; exit 1; }
 cd $DEVEL_REPO
