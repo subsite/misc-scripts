@@ -11,19 +11,28 @@
 # Note:
 # - Wildcard paths must be quoted
 # - Only *.[extension] wildcards are supported (*, *.* or file* won't work)
+#
+# Credits:
+# Thanks for the idea, Eric_G!
+# (http://www.unix.com/unix-for-dummies-questions-and-answers/24994-sftp-batch-script.html)
+#
+################
 
+# check for correct amount of args
 if [ $# -ne 3 ]
 then
         echo "USAGE: sftp_put { /dir/file.txt | \"/dir/*.txt\" } user@sftp.server.com remote_directory"
         exit
 fi
 
+# define vars
 payload=$1
 server_string=$2
 host_dir=$3
 local_dir=$(dirname "${payload}")
 local_file=$(basename "${payload}")
 
+# make temporary batchfile
 echo cd $host_dir > /tmp/sftp_batch.tmp # cd to remote dir
 echo lcd $local_dir >> /tmp/sftp_batch.tmp # lcd to local dir
 echo mput $local_file >> /tmp/sftp_batch.tmp # "multi-put" file(s)
