@@ -1,8 +1,16 @@
 #!/bin/sh
 #
-# Usage (single file): sftp_put /payload/dir/file.txt user@sftp.server.com remote_directory
-# Usage (extension wildcard): sftp_put "/payload/dir/*.txt" user@sftp.server.com remote_directory
-# N.B. A wildcard path must be quoted and only extension wildcards are supported (*, *.* or file* won't work)
+# A cron-schedulable script for uploading files using sftp. This script is only relevant if you don't
+# have ssh shell access (server goes "This service allows sftp connections only"),
+# otherwise, forget this convoluted hack and use scp or rsync instead.
+#
+# Usage: 
+# - A single file: sftp_put /payload/dir/file.txt user@sftp.server.com remote_directory
+# - Multiple files using an extension wildcard: sftp_put "/payload/dir/*.txt" user@sftp.server.com remote_directory
+#
+# Note:
+# - Wildcard paths must be quoted
+# - Only *.[extension] wildcards are supported (*, *.* or file* won't work)
 
 if [ $# -ne 3 ]
 then
@@ -16,12 +24,14 @@ host_dir=$3
 local_dir=$(dirname "${payload}")
 local_file=$(basename "${payload}")
 
-echo cd $host_dir > /tmp/sftp_batch.tmp
-echo lcd $local_dir >> /tmp/sftp_batch.tmp
-echo mput $local_file >> /tmp/sftp_batch.tmp
-echo quit >> /tmp/sftp_batch.tmp
+echo cd $host_dir > /tmp/sftp_batch.tmp # cd to remote dir
+echo lcd $local_dir >> /tmp/sftp_batch.tmp # lcd to local dir
+echo mput $local_file >> /tmp/sftp_batch.tmp # "multi-put" file(s)
+echo quit >> /tmp/sftp_batch.tmp # bye bye
 
+# run sftp command using -b (batchfile) option
 /usr/bin/sftp -b /tmp/sftp_batch.tmp $server_string 1> /dev/null
 
+# delete temporary barchfile
 rm /tmp/sftp_batch.tmp
 
