@@ -39,7 +39,7 @@ Usage:
 
 Note:
 - Wildcard paths must be quoted
-- Only *.[extension] wildcards are supported (*, *.* or file* won't work)
+- Only \*.[extension] wildcards are supported (`*`, `*.*` or `file*` won't work)
 
 Credits:
 Thanks for the idea, Eric_G!
