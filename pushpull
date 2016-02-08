@@ -37,14 +37,6 @@ then
 	exit 0
 fi
 
-if [[ "$CUR_BRANCH" != "$GITBRANCH" ]]
-then
-        read -p "Current branch is '$CUR_BRANCH'. Checkout '$GITBRANCH' and exit?. (Enter/Ctrl-C)"
-	git checkout $GITBRANCH
-	exit 0;
-fi
-
-
 # Commented - allow pushing from dirty devel
 #git diff --quiet || { echo "ERROR: Dirty state. Exiting."; exit 1; }
 
