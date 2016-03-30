@@ -15,7 +15,9 @@ fi
 
 DATABASE=$1
 USER=$2
-PGPORT=`pg_lsclusters | grep online |awk '{print $3}'`
+PGPORT="5432"
+# Does not work reliably:
+#PGPORT=`pg_lsclusters | grep online |awk '{print $3}'`
 DUMPFILE="$3"
 DUMPSTRING="pg_dump --host localhost --port $PGPORT --username $USER --format custom --blobs --verbose --file $DUMPFILE $DATABASE"
 echo $DUMPSTRING
