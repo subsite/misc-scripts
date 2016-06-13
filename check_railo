@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Requests a testpage using a timeout, and restarts Railo (or Adobe ColdFusion server, 
+# or something else) if the page doesn't respond. Also logs http status code if not "200 OK".
+#
+# Run in cron (as root), example:
+# */3 7-18 * * * root  /usr/local/sbin/check_webserver http://localhost/testpage.cfm
+
+#### CONF SECTION ####
+#
+# Seconds to wait for testpage to answer
+TIMEOUT="7" 
+#
+# Restart railo only after RESTART_INTERVAL minutes after last restart. Prevents restart loop.
+RESTART_INTERVAL="60" 
+#
+# Logfile
+LOGFILE="/var/log/check_webserver.log"
+#
+# Command to run. Could also be "service coldfusion restart" or something else.
+RESTART_COMMAND="/opt/railo/railo_ctl restart"
+#
+#### END OF CONF SECTION ####
+
+if [ $# -ne 1 ]
+then
+	echo "USAGE: check_railo [testpage url]"
+	exit
+fi
+
+
+TESTPAGE=$1
+
+killtimeout=$(($TIMEOUT+1)) # Kill command one second after timeout
+
+timefile="/tmp/check_webserver_timefile" # File for storing RESTART_INTERVAL
+if [ ! -f "$timefile" ];
+then
+	# If missing (first run), create timefile and make it 12 hours old
+	/usr/bin/touch $timefile -d '-12 hour'
+fi
+timefile_age=$(( (`date +%s` - `stat -L --format %Y $timefile`)/60 )) # Get file age in minutes
+
+RESULT=$(/usr/bin/timeout -k $killtimeout $TIMEOUT /usr/bin/curl -s -o /dev/null -I -w "%{http_code}" ${TESTPAGE})
+
+if [ "$RESULT" == "" ];
+then
+	ERRORSTATUS="TIMEOUT"
+
+	if [ "$timefile_age" -gt "$RESTART_INTERVAL" ];
+	then
+		ERRORSTATUS="TIMEOUT: INIT RESTART"
+		/usr/bin/touch $timefile
+		# Restart server
+		$RESTART_COMMAND
+	else
+		# Don't restart until timefile is old enough
+		ERRORSTATUS="TIMEOUT: LAST RESTART TOO RECENT ($timefile_age min)"
+	fi
+
+
+elif [ "$RESULT" != 200 ];
+then
+	# Responds in time but returns http error: save error for logging.
+	ERRORSTATUS=$RESULT
+fi
+
+if [ "$ERRORSTATUS" ];
+then
+	# Log errorstatus
+	echo "$(date "+%Y-%m-%d %H:%M:%S")" ERROR: "$ERRORSTATUS" >> $LOGFILE
+fi
