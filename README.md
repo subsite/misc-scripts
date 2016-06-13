@@ -3,6 +3,18 @@
 
 A small collection of some of the scripts I use frequently, kept here for easier distribution among the servers we work with. I usually clone this repo somewhere in home and then symlink the scripts I need to `/usr/local/sbin`. 
 
+###check_railo
+
+Requests a testpage using a timeout, and restarts Railo (or Adobe ColdFusion server, or something else) if the page doesn't respond. Also logs http status code if not "200 OK".
+
+USAGE: `check_railo [testpage url]`
+
+Run as root, special dependencies: curl
+
+Cron example (every three minutes during working hours):   
+`*/3 7-18 * * * root  /usr/local/sbin/check_webserver http://localhost/testpage.cfm`
+
+
 ###db_backup
 
 Dump script for PostgreSQL databases, Fredrik Welander 2013
