@@ -3,8 +3,16 @@
 # Requests a testpage using a timeout, and restarts Railo (or Adobe ColdFusion server, 
 # or something else) if the page doesn't respond. Also logs http status code if not "200 OK".
 #
-# Run in cron (as root), example:
+# USAGE: check_railo [testpage url]
+#
+# - Run as root
+# - Special dependencies: curl
+#
+# Cron example (every three minutes during working hours):
 # */3 7-18 * * * root  /usr/local/sbin/check_webserver http://localhost/testpage.cfm
+#
+# A suitable testpage is a cfm template that runs a simple database query on each datasource.
+#
 
 #### CONF SECTION ####
 #
@@ -41,6 +49,7 @@ then
 fi
 timefile_age=$(( (`date +%s` - `stat -L --format %Y $timefile`)/60 )) # Get file age in minutes
 
+# Run the test and save the result.
 RESULT=$(/usr/bin/timeout -k $killtimeout $TIMEOUT /usr/bin/curl -s -o /dev/null -I -w "%{http_code}" ${TESTPAGE})
 
 if [ "$RESULT" == "" ];
