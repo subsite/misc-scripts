@@ -1,6 +1,7 @@
 
 # Misc scripts by SubSite
-## Fredrik Welander
+
+A small collection of some of the scripts I use frequently, kept here for easier distribution among the servers we work with. I usually clone this repo somewhere in home and then symlink the scripts I need to `/usr/local/sbin`. 
 
 ###db_backup
 
@@ -14,7 +15,7 @@ CRON EXAMPLE:
 
 ###diskspace
 
-Sends and alert email if the available space on a partition is less than theshold.   
+Sends and alert email if the available space on a partition is less than treshold.   
 USAGE: `diskspace [partition] [treshold]`  
 
 Crontab example (sends alert if /dev/sda1 has less than 50GB free):  
@@ -44,3 +45,7 @@ Note:
 Credits:
 Thanks for the idea, Eric_G!
 (http://www.unix.com/unix-for-dummies-questions-and-answers/24994-sftp-batch-script.html)
+
+###snapshotbackup
+
+A pretty complete solution for time freezed incremental backups. This one has earned its own repo: https://github.com/subsite/snapshotbackup
