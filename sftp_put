@@ -39,7 +39,7 @@ echo mput $local_file >> /tmp/sftp_batch.tmp # "multi-put" file(s)
 echo quit >> /tmp/sftp_batch.tmp # bye bye
 
 # run sftp command using -b (batchfile) option
-/usr/bin/sftp -b /tmp/sftp_batch.tmp $server_string 
+/usr/bin/sftp -v -b /tmp/sftp_batch.tmp $server_string 
 
 # delete temporary barchfile
 rm /tmp/sftp_batch.tmp
