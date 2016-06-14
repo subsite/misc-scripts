@@ -31,7 +31,7 @@ Sends and alert email if the available space on a partition is less than treshol
 USAGE: `diskspace [partition] [treshold]`  
 
 Crontab example (sends alert if /dev/sda1 has less than 50GB free):  
-`0 0 * * * root /usr/local/sbin/diskspace /dev/sda1 5`
+`0 0 * * * root /usr/local/sbin/diskspace /dev/sda1 50`
 
 ###pushpull
 
