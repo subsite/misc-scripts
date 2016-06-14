@@ -28,6 +28,13 @@ LOGFILE="/var/log/check_railo.log"
 # Command to run. Could also be "service coldfusion restart" or something else.
 RESTART_COMMAND="/opt/railo/railo_ctl restart"
 #
+# Command for sendin email. Syntax as mailutils /usr/bin/mail, e.g. MAIL_COMMAND [subject] [to]
+# Comment out for no mails
+MAIL_COMMAND="/usr/local/sbin/mailer"
+#
+# Mail recipient
+ERROR_MAIL="$(cat /etc/scriptmail.txt)"
+#
 #### END OF CONF SECTION ####
 
 if [ $# -ne 1 ]
@@ -78,4 +85,14 @@ if [ "$ERRORSTATUS" ];
 then
 	# Log errorstatus
 	echo "$(date "+%Y-%m-%d %H:%M:%S")" ERROR: "$ERRORSTATUS" >> $LOGFILE
+
+	if [ "$MAIL_COMMAND" ];
+	then
+		# Send mail
+		$MAIL_COMMAND "CHECK RAILO ERROR: $ERRORSTATUS" "$ERROR_MAIL"
+	fi
+
 fi
+
+
+
