@@ -1,0 +1,36 @@
+#!/bin/bash 
+#
+# Search files in current folder including ALL given words.
+#
+# USAGE: andsearch "MATCH" [word1] [word2] ...
+# EXAMPLE: andsearch "*.txt" foo bar
+#
+#
+GREP="grep -i"
+XARGS="xargs"
+#
+
+if [ $# -lt 2 ]; then
+	echo "USAGE: andsearch  \"MATCH\" [word1] [word2] ..."
+	exit
+fi
+
+MATCH="$1"
+shift
+FIRSTWORD="$1"
+ORWORDS="$1"
+shift
+
+ADDGREP=""
+for word in "$@"
+do
+	ADDGREP="$ADDGREP | $XARGS $GREP -l \"$word\""
+	ORWORDS="${ORWORDS}|$word"
+done
+
+eval "$GREP -l $GREPARGS \"$FIRSTWORD\" $MATCH $ADDGREP |$XARGS $GREP --color -E \"$ORWORDS\" "
+
+
+
+
+
