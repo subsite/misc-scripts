@@ -3,6 +3,18 @@
 
 A small collection of some of the scripts I use frequently, kept here for easier distribution among the servers we work with. I usually clone this repo somewhere in home and then symlink the scripts I need to `/usr/local/sbin`. 
 
+###andsearch
+
+Search files in current folder including ALL given words.
+
+USAGE: `andsearch "MATCH" [word1] [word2] ... `
+EXAMPLE: `andsearch "*.txt" foo bar`
+
+###blacklist_hosts
+
+Append external blacklist to /etc/hosts. Run as root using cron. 
+Default blacklist from https://github.com/StevenBlack/hosts
+
 ###check_railo
 
 Requests a testpage using a timeout, and restarts Railo (or Adobe ColdFusion server, or something else) if the page doesn't respond. Also logs http status code if not "200 OK".
