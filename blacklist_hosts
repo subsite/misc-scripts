@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Appends external blacklist to /etc/hosts. Run as root using cron.
+# First run just appends, subsequent runs replaces the appended lines.
+# WARNING: Might destroy your /etc/hosts, make backup before trying out.
+# THANKS TO: StevenBlack, https://github.com/StevenBlack/hosts
+
+# External blacklist to append. Use this or another external hosts file entirely at your own risk.
+HOSTSURL="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+# Tempfile
+TEMPFILE="/tmp/hosts_blacklist.tmp"
+# Minimum accepted line count of blacklist
+BLACKLIST_MINLINES=5000
+
+# Download blacklist
+/usr/bin/wget -O $TEMPFILE $HOSTSURL
+
+# Count lines in blacklist
+BLACKLIST_LINES=$(grep -c "^" $TEMPFILE)
+
+# Quick and dirty check if file is ok (long enough)
+if [[ "$BLACKLIST_LINES"  -lt "$BLACKLIST_MINLINES" ]]; then
+    echo "Blacklist not valid: less than $BLACKLIST_MINLINES lines."; exit;
+fi
+
+# Clear previously appended blacklist from /etc/hosts
+/bin/sed -i.bak '/#### GENERATED BLACKLIST /'Q /etc/hosts
+
+# Recreate separator line
+echo "#### GENERATED BLACKLIST  $(date "+%Y-%m-%d %H:%M:%S") ####" >> /etc/hosts
+ 
+# Append new blacklist to /etc/hosts
+cat "$TEMPFILE" >> /etc/hosts
+
