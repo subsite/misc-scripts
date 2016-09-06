@@ -73,3 +73,9 @@ Thanks for the idea, Eric_G!
 ###snapshotbackup
 
 A pretty complete solution for time freezed incremental backups. This one has earned its own repo: https://github.com/subsite/snapshotbackup
+
+###split_pgdump.php
+
+A php script that splits a PostgreSQL schema only dump into separate database object files. Useful for getting your database under version control.
+
+Usage: `split_pgdump.php SCHEMA_FILE OUTPUT_DIR`
