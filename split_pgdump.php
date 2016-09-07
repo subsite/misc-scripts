@@ -19,7 +19,7 @@
 |
 | NOTES: 
 |   - Tested on PostgreSQL 9.5 only.
-|   - Dump using -s --schema_only (don't know what will happen if run on full dump)
+|   - Dump using -s (--schema_only) don't know what will happen if run on full dump...
 |   - This script will not in any way backup your data
 */
 
