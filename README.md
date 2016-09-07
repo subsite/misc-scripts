@@ -78,4 +78,6 @@ A pretty complete solution for time freezed incremental backups. This one has ea
 
 A php script that splits a PostgreSQL schema only dump into separate database object files. Useful for getting your database under version control.
 
+Use with cron or as a pre-commit hook as described here: https://github.com/subsite/git-cheatsheet/blob/master/README.md#database-schema-hook
+
 Usage: `split_pgdump.php SCHEMA_FILE OUTPUT_DIR`
