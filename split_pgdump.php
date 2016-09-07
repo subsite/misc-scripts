@@ -11,6 +11,16 @@
 | Include the types you want to create separate files for in
 | conf => savetypes. 
 |
+| USAGE: split_pgdump.php SCHEMA_FILE OUTPUT_DIR
+|
+| AUTOMATION OPTIONS: 
+|   - As a pre-commit hook in a project that uses PostgreSQL
+|   - As a cron script
+|
+| NOTES: 
+|   - Tested on PostgreSQL 9.5 only.
+|   - Dump using -s --schema_only (don't know what will happen if run on full dump)
+|   - This script will not in any way backup your data
 */
 
 
