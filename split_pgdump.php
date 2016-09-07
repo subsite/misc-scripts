@@ -4,15 +4,23 @@
 /*
 | Yet another schema dump splitter.
 | Splits a postgresql schema dump into separate files.
-| The script tries to bundle rules, indexes, sequences and such within 
-| the parent object file.
+| The bundles rules, indexes, sequences, constraints and such  
+| within its parent object file, e.g. the constraints of a table
+| is stored in the same file as the table itself.
+|
+| Include the types you want to create separate files for in
+| conf => savetypes. 
 |
 */
 
 
 $conf = [
-    "ignoretypes" => [ "ACL", "SEQUENCE", "SEQUENCE OWNED BY", "DEFAULT", "DEFAULT ACL" ],
-    "savetypes" => ["TABLE", "VIEW", "FUNCTION", "EXTENSION" ],
+    "savetypes" => [ // Database objects stored as separate files
+        "TABLE", "VIEW", "FUNCTION", "EXTENSION", "AGGREGATE", "TYPE" 
+    ],
+    "ignoretypes" => [ // Don't save these types at all
+        "ACL", "SEQUENCE", "SEQUENCE OWNED BY", "DEFAULT", "DEFAULT ACL" 
+    ]
 ];
 
 if (empty($argv[1]) || empty($argv[2])) {
@@ -56,20 +64,19 @@ foreach($parts as $key => $part) {
             // Parse name
             $name = explode(".", $name)[0];
             $name = explode("(", $name)[0];
-            $name = str_replace('TABLE ','',$name);
-            $name = str_replace('VIEW ','',$name);
-            $name = str_replace('COMMENT ON COLUMN ','',$name);
-            $name = str_replace('COLUMN ','',$name);
-            $name = str_replace('EXTENSION ','',$name);
+            $name = str_replace([ 
+                "TABLE ", "VIEW ", "COMMENT ON COLUMN ", "COLUMN ", "EXTENSION ", "FUNCTION " 
+            ],'',$name);
 
             // Parse special types to find their parent object name
             if ($type == "INDEX") {
                 $name = strstr(substr(strstr($parts[$key+1], "ON"), 3), " ", true);
-            } else if ($type == "CONSTRAINT") {
+            } else if ($type == "CONSTRAINT" || $type == "FK CONSTRAINT") {
                 $name = strstr(substr(strstr($parts[$key+1], "ALTER TABLE ONLY"), 17), "\n", true);
-            }  else if ($type == "RULE") {
+            } else if ($type == "RULE") {
                 $name = strstr(substr(strstr($parts[$key+1], "TO"), 3), " ", true);
             }
+            $name = str_replace('"','',$name);
 
             // Put content into correct key
             if (empty($splitted[$name])) {
