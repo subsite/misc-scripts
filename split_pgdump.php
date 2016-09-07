@@ -21,6 +21,7 @@
 |   - Tested on PostgreSQL 9.5 only.
 |   - Dump using -s (--schema_only) don't know what will happen if run on full dump...
 |   - This script will not in any way backup your data
+|
 */
 
 
@@ -49,42 +50,44 @@ if (empty($outdir)) {
 echo "Splitting " . $dumpfile . " to " . $outdir . "/";
 echo "\n";
 
-$contents = file_get_contents($dumpfile);
-$parts = preg_split('/(-- Name: [a-zA-Z0-9 "\(\),:;_-]+)/', $contents, 0, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+// Read dumpfile
+$dump = file_get_contents($dumpfile);
+// Split dumpfile into array preserving delimiter (header)
+$parts = preg_split('/(-- Name: [a-zA-Z0-9 "\(\),:;_-]+)/', $dump, 0, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 
 $splitted = [];
-
 
 foreach($parts as $key => $part) {
     // preg_split will put delimiters in odd keys, so:
     if ($key % 2 == 1) {
-        // Parse header into assoc array
-        $h = substr($parts[$key], 3);
-        $h = str_replace('"','',$h);
-        $h = str_replace('; ','", "',$h);
-        $h = '{"' . str_replace(': ','": "',$h) . '"}';
-        $h = (array) json_decode($h);
-        $name = $h["Name"];
+        // Get header from part
+        $header = substr($parts[$key], 3);
+        // Temporarily to JSON 
+        $header = '{"' . str_replace(['"', '; ', ': '], ['', '", "', '": "'] ,$header) . '"}';
+        // Make assoc array
+        $header = (array) json_decode($header);
 
-        // Parse type suppressing errors
-        $type = @$h["Type"];
+        // Get name, type and query data
+        $name = $header["Name"];
+        $type = @$header["Type"];
+        $data = $parts[$key+1];
 
         if (!in_array($type, $conf["ignoretypes"])) {
            
-            // Parse name
+            // Name cleanup
             $name = explode(".", $name)[0];
             $name = explode("(", $name)[0];
             $name = str_replace([ 
                 "TABLE ", "VIEW ", "COMMENT ON COLUMN ", "COLUMN ", "EXTENSION ", "FUNCTION " 
             ],'',$name);
 
-            // Parse special types to find their parent object name
+            // Parse special types to find their parent object name in query
             if ($type == "INDEX") {
-                $name = strstr(substr(strstr($parts[$key+1], "ON"), 3), " ", true);
+                $name = strstr(substr(strstr($data, "ON"), 3), " ", true);
             } else if ($type == "CONSTRAINT" || $type == "FK CONSTRAINT") {
-                $name = strstr(substr(strstr($parts[$key+1], "ALTER TABLE ONLY"), 17), "\n", true);
+                $name = strstr(substr(strstr($data, "ALTER TABLE ONLY"), 17), "\n", true);
             } else if ($type == "RULE") {
-                $name = strstr(substr(strstr($parts[$key+1], "TO"), 3), " ", true);
+                $name = strstr(substr(strstr($data, "TO"), 3), " ", true);
             }
             $name = str_replace('"','',$name);
 
@@ -92,13 +95,13 @@ foreach($parts as $key => $part) {
             if (empty($splitted[$name])) {
                 $splitted[$name] = ["body" => "", "type" => ""];
                 $splitted[$name]["body"] = "-- \n" . $parts[$key];
-                $addcontent = $parts[$key+1];
+                $addcontent = $data;
             } else {
-                $addcontent = "-- \n" . $parts[$key]. $parts[$key+1];
+                $addcontent = "-- \n" . $parts[$key]. $data;
             }
             $splitted[$name]["body"] .= substr($addcontent, 0, -3);
 
-            // Only add defined content types
+            // Only add predefined content types
             if (in_array($type, $conf["savetypes"])) {
                 $splitted[$name]["type"] = $type;
             }
