@@ -37,12 +37,13 @@ ERROR_MAIL="$(cat /etc/scriptmail.txt)"
 #
 #### END OF CONF SECTION ####
 
+
+
 if [ $# -ne 1 ]
 then
 	echo "USAGE: check_railo [testpage url]"
 	exit
 fi
-
 
 TESTPAGE=$1
 
@@ -83,15 +84,15 @@ fi
 
 if [ "$ERRORSTATUS" ];
 then
-	# Log errorstatus
-	echo "$(date "+%Y-%m-%d %H:%M:%S")" ERROR: "$ERRORSTATUS" >> $LOGFILE
-
 	if [ "$MAIL_COMMAND" ];
 	then
 		# Send mail
 		$MAIL_COMMAND "CHECK RAILO ERROR: $ERRORSTATUS" "$ERROR_MAIL"
+		ERRORSTATUS="$ERRORSTATUS, mail sent to $ERROR_MAIL"
 	fi
 
+	# Log errorstatus
+	echo "$(/bin/date "+%Y-%m-%d %H:%M:%S") ERROR: $ERRORSTATUS" >> $LOGFILE
 fi
 
 
