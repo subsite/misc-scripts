@@ -5,12 +5,18 @@
 # WARNING: Might destroy your /etc/hosts, make backup before trying out.
 # THANKS TO: StevenBlack, https://github.com/StevenBlack/hosts
 
+####### CONF #######
+#
 # External blacklist to append. Use this or another external hosts file entirely at your own risk.
 HOSTSURL="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
 # Tempfile
 TEMPFILE="/tmp/hosts_blacklist.tmp"
 # Minimum accepted line count of blacklist
 BLACKLIST_MINLINES=5000
+# Whitelist hosts containing these substrings
+WHITELIST=( "google-analytics" "analytics.google" )
+#
+##### CONF END ######
 
 # Download blacklist
 /usr/bin/wget -O $TEMPFILE $HOSTSURL
@@ -22,6 +28,12 @@ BLACKLIST_LINES=$(grep -c "^" $TEMPFILE)
 if [[ "$BLACKLIST_LINES"  -lt "$BLACKLIST_MINLINES" ]]; then
     echo "Blacklist not valid: less than $BLACKLIST_MINLINES lines."; exit;
 fi
+
+# Whitelist hosts by adding comment #WHITELIST to the lines
+for i in "${WHITELIST[@]}"
+do
+	sed -e "/${i}/s/^/#WHITELIST /g" -i $TEMPFILE;
+done
 
 # Clear previously appended blacklist from /etc/hosts
 /bin/sed -i.bak '/#### GENERATED BLACKLIST /'Q /etc/hosts
