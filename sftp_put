@@ -30,12 +30,16 @@ payload=$1
 server_string=$2
 host_dir=$3
 local_dir=$(dirname "${payload}")
-local_file=$(basename "${payload}")
 
 # make temporary batchfile
 echo cd $host_dir > /tmp/sftp_batch.tmp # cd to remote dir
 echo lcd $local_dir >> /tmp/sftp_batch.tmp # lcd to local dir
-echo mput $local_file >> /tmp/sftp_batch.tmp # "multi-put" file(s)
+
+# put file or loop through files matching wildcard
+for i in $payload
+do
+   echo put $(basename "${i}") >> /tmp/sftp_batch.tmp
+done
 echo quit >> /tmp/sftp_batch.tmp # bye bye
 
 # run sftp command using -b (batchfile) option
