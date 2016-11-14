@@ -1,11 +1,15 @@
 #!/usr/bin/python
 
-# Sends messages to Telegram Bot API. See https://core.telegram.org/bots/api for details.
+# Sends messages as a Telegram Bot. 
+# See: https://core.telegram.org/bots#3-how-do-i-create-a-bot for details
 # 
 # Install: run as root (sudo) to create conf file
 # Dependencies: python python-requests
 #
 # Note: uses one system wide api_token only. Not meant for multi-user environments.
+# 
+# USAGE: telegrambot.py "MESSAGE" 
+# (MESSAGE supports markdown) 
 #
 # Fredrik Welander 2016
 #
@@ -20,7 +24,7 @@ except ImportError:
 	print "Unmet dependencies. Install python-requests"
 	exit(1)
 
-usage = "USAGE: telegrambot.py MESSAGE"
+usage = 'USAGE: telegrambot.py "MESSAGE"'
 config = ConfigParser.ConfigParser()   
 configFile = "/etc/telegrambot.conf"
 
@@ -37,11 +41,13 @@ if len(config.read(configFile)) != 1:
 		cfgfile.close()
 		os.chmod(configFile, 0640)
 		os.chown(configFile, 0, 4)
-		print "Config file created with permissions -rw-r----- and ownership: root.adm. Setup complete."
+		print "Config file created with permissions '-rw-r-----' and ownership 'root.adm'."
+		print "Change permissions as needed or just add yourself to group adm."
+		print "Setup complete."
 		print usage
 		exit(0)
 	else:
-		print "Config file {0} not found. Run as root for setup".format(configFile)
+		print "Config file {0} not found or no read permissions. Run as root for setup.".format(configFile)
 		exit(1)
 
 if len(sys.argv) < 2:
