@@ -98,3 +98,10 @@ Use with cron or as a pre-commit hook as described here: https://github.com/subs
 Usage: `split_pgdump.php SCHEMA_FILE OUTPUT_DIR`
 
 Source: [split_pgdump.php](https://github.com/subsite/misc-scripts/blob/master/split_pgdump.php)
+
+###telegrambot.py
+
+Sends message as a Telegram Bot. See https://core.telegram.org/bots
+Good for automated notifications from your servers.
+
+Usage `telegrambot.py "Hello Telegram"`
