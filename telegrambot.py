@@ -12,9 +12,13 @@
 
 import os
 import sys
-import requests
 import socket
 import ConfigParser
+try:
+	import requests
+except ImportError:
+	print "Unmet dependencies. Install python-requests"
+	exit(1)
 
 usage = "USAGE: telegrambot.py MESSAGE"
 config = ConfigParser.ConfigParser()   
