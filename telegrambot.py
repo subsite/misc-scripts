@@ -6,8 +6,10 @@
 # Install: run as root (sudo) to create conf file
 # Dependencies: python python-requests
 #
-# Note: uses one system wide api_token only. Not meant for multi-user environments.
-# 
+# Note: Uses one system wide api_token only. Not meant for multi-user environments.
+# Note: There's no stopping anyone from adding this bot to their Telegram. 
+#       The messages will however only go to the chat_id in the config file
+#
 # USAGE: telegrambot.py "MESSAGE" 
 # (MESSAGE supports markdown) 
 #
