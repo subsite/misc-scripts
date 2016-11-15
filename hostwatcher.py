@@ -33,6 +33,6 @@ for ping, hosts in host_types:
       if response != 0:
         message = "{0} {1} {2}.".format(host, failmessage, ping)
         print message
-        os.system('{0} "{1}"'.format(config.get('main', 'messenger'), message))
+        os.system('{0} "hostwatcher: {1}"'.format(config.get('main', 'messenger'), message))
         
 

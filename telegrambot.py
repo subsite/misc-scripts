@@ -28,7 +28,7 @@ except ImportError:
 	exit(1)
 
 usage = 'USAGE: telegrambot.py "MESSAGE"'
-hostname = socket.gethostname()
+hostname = socket.gethostbyaddr(socket.gethostname())[0]
 
 # Init config
 config = ConfigParser.ConfigParser()   
