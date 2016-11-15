@@ -32,6 +32,17 @@ hostname = socket.gethostname()
 config = ConfigParser.ConfigParser()   
 configFile = "/etc/telegrambot.conf"
 
+# Request function
+def botcall(method, token, data={}):
+	response = requests.get(
+		url='https://api.telegram.org/bot{0}/{1}'.format(token, method),
+		params=data
+	).json()
+	if not response["ok"]:
+		print "Request error: {0} {1}".format(response["error_code"], response["description"])
+		exit(1)
+	return response
+
 # Check if config file exists
 if len(config.read(configFile)) != 1:
 	# Check if run by root
@@ -39,16 +50,39 @@ if len(config.read(configFile)) != 1:
 		if raw_input("Run setup? [Y/n]: ").lower() not in [ 'y', '' ]:
 			exit(0)
 	    
-		cfgfile = open(configFile,'w')
+		token = raw_input("Enter Telegram Bot API token: ").strip()
+		bot_uname = botcall("getMe", token)["result"]["username"]
+		print "Bot {0} found. Getting last chat_id...".format(bot_uname)
+
 		config.add_section('main')
-		api_token = raw_input("Enter Telegram Bot API token: ").strip()
-		config.set('main', 'api_token', api_token)
+		config.set('main', 'api_token', token)
+		config.set('main', 'bot', bot_uname)
+
+		# Request: get chats for bot
+		chats = botcall("getUpdates", token)["result"]
+		if len(chats) == 0:
+			print "No chats found. Open telegram.me/{0} in Telegram and press Start, then re-run Setup.".format(bot_uname)
+			exit(1)
+
+		# Get last chat id
+		last_chat = chats[-1]["message"]["chat"]
+		if raw_input("Found chat_id {0} for user {1} {2}. Is this correct? [Y/n]: "
+			.format(
+				last_chat["id"], 
+				last_chat["first_name"], 
+				last_chat["last_name"])).lower() not in [ 'y', '' ]:
+			exit(0)
+		config.set('main', 'chat_id', last_chat["id"])
+
+		# Write to config file
+		cfgfile = open(configFile,'w')
 		config.write(cfgfile)
 		cfgfile.close()
 		os.chmod(configFile, 0640)
 		os.chown(configFile, 0, 4)
+
 		print "Config file created with permissions '-rw-r-----' and ownership 'root.adm'."
-		print "Change permissions as needed or just add yourself to group adm."
+		print "Change permissions as needed or just add yourself to group adm. Guard your token."
 		print "Setup complete."
 		print usage
 		exit(0)
@@ -63,23 +97,10 @@ if len(sys.argv) < 2:
 
 # Read api token from config
 token = config.get('main', 'api_token')
+chat_id = config.get('main', 'chat_id')
 message = "*{0}:* {1}".format(hostname, sys.argv[1])
 
-# Request function
-def botcall(method, data={}):
-	response = requests.get(
-		url='https://api.telegram.org/bot{0}/{1}'.format(token, method),
-		params=data
-	).json()
-	if not response["ok"]:
-		print "Request error: {0} {1}".format(response["error_code"], response["description"])
-		exit(1)
-	return response
-
-# Request 1/2, get chat_id
-chat_id = botcall("getUpdates")["result"][-1]["message"]["chat"]["id"]
-
 # Request 2/2, send message
-botcall("sendMessage", {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"})
+botcall("sendMessage", token, {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"})
 
 
