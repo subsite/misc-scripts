@@ -30,10 +30,11 @@ RESTART_COMMAND="/opt/railo/railo_ctl restart"
 #
 # Command for sendin email. Syntax as mailutils /usr/bin/mail, e.g. MAIL_COMMAND [subject] [to]
 # Comment out for no mails
-MAIL_COMMAND="/usr/local/sbin/mailer"
+MAIL_COMMAND="/usr/local/sbin/telegrambot.py"
 #
 # Mail recipient
-ERROR_MAIL="$(cat /etc/scriptmail.txt)"
+#ERROR_MAIL="$(cat /etc/scriptmail.txt)"
+ERROR_MAIL="telegram"
 #
 #### END OF CONF SECTION ####
 
