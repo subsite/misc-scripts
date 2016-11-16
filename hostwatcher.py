@@ -49,5 +49,7 @@ for ping, hosts in host_types:
       elif os.path.isfile(statusfile):
           os.remove(statusfile)
           os.system('{0} "(hostwatcher) {1} answers again!"'.format(config.get('main', 'messenger'), host))
+
+
         
 
