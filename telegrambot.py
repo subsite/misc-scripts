@@ -100,7 +100,7 @@ if len(sys.argv) < 2:
 # Read api token from config
 token = config.get('main', 'api_token')
 chat_id = config.get('main', 'chat_id')
-message = "*{0}:* {1}".format(hostname, sys.argv[1])
+message = "[{0}]: {1}".format(hostname, sys.argv[1])
 
 # Request 2/2, send message
 botcall("sendMessage", token, { "chat_id": chat_id, "text": message })
