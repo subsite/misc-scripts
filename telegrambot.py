@@ -41,7 +41,7 @@ def botcall(method, token, data={}):
 		params=data
 	).json()
 	if not response["ok"]:
-		print "Request error: {0} {1}".format(response["error_code"], response["description"])
+		print "Telegrambot request error: {0} {1}".format(response["error_code"], response["description"])
 		exit(1)
 	return response
 
@@ -103,6 +103,6 @@ chat_id = config.get('main', 'chat_id')
 message = "*{0}:* {1}".format(hostname, sys.argv[1])
 
 # Request 2/2, send message
-botcall("sendMessage", token, {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"})
+botcall("sendMessage", token, { "chat_id": chat_id, "text": message })
 
 
