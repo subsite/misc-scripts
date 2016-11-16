@@ -88,7 +88,7 @@ then
 	if [ "$MAIL_COMMAND" ];
 	then
 		# Send mail
-		$MAIL_COMMAND "CHECK RAILO ERROR: $ERRORSTATUS" "$ERROR_MAIL"
+		$MAIL_COMMAND "(check_railo) ERROR: $ERRORSTATUS" "$ERROR_MAIL"
 		ERRORSTATUS="$ERRORSTATUS, mail sent to $ERROR_MAIL"
 	fi
 

@@ -21,7 +21,7 @@ if [ "$GB" -lt "$TRESHOLD" ]; then
    MESSAGE="Disk $DISK on $HOST has only ${GB}G of $TOTAL free "
    echo "$MESSAGE" 
    if [ -n "$MESSENGER" ]; then
-        $MESSENGER "$MESSAGE"
+        $MESSENGER "(diskspace) $MESSAGE"
    else
         echo "$MESSAGE" | /usr/bin/mail -s "Diskspace WARNING on $HOSTNAME" "$MAIL_TO"
    fi
