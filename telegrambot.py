@@ -9,6 +9,7 @@
 # Note: Uses one system wide api_token only. Not meant for multi-user environments.
 # Note: There's no stopping anyone from adding this bot to their Telegram. 
 #       The messages will however only go to the chat_id in the config file
+# Note: Config file is group readable by adm. Restart cron if you've just added your user to adm.
 #
 # USAGE: telegrambot.py "MESSAGE" 
 # (MESSAGE supports markdown) 
