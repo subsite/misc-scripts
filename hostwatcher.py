@@ -27,29 +27,42 @@ failmessage = "does not answer"
 host_types = config.items( "hosts" )
 for ping, hosts in host_types:
     for host in json.loads(hosts):
-      if ping == "http":
-        response =  os.system("nc -z -w2 " + host + " 80")
-      else:
-        response = os.system(ping + " -c 1 -w 1 " + host + " > /dev/null 2>&1")
+      # Try ping 2 times, break if host answers
+      for i in range(2):
+        print "{0} {1} try {2}".format(ping, host, i+1)
+        if ping == "http":
+          response =  os.system("nc -z -w2 " + host + " 80")
+        else:
+          response = os.system(ping + " -c 1 -w 2 " + host + " > /dev/null 2>&1")
+        
+        statusfile = "/tmp/hostwatcher-nonresponsive-"+host
       
-      statusfile = "/tmp/hostwatcher-nonresponsive-"+host
-      # host doesn't answer'
-      if response != 0:
-        message = "{0} {1} {2}.".format(host, failmessage, ping)
-        print message
-        # if nonresponsive-status file does not exists yet, create it and send message
-        if not os.path.isfile(statusfile):
-          os.mknod(statusfile)
-          os.system('{0} "(hostwatcher) {1}"'.format(config.get('main', 'messenger'), message))
-        # if nonresponsive-status older than 24h, delete it to get new message
-        elif time.time()-os.stat(statusfile).st_ctime > 86400:
-          os.remove(statusfile)
-      
-      # Host answers and nonresponsive-status file exists 
-      elif os.path.isfile(statusfile):
-          os.remove(statusfile)
-          os.system('{0} "(hostwatcher) {1} answers again!"'.format(config.get('main', 'messenger'), host))
+        # host doesn't answer on first try
+        if response != 0 and i == 0:
+          # wait seconds before retry
+          time.sleep(5)
+        # host doesn't answer on second try
+        elif response != 0:
+          message = "{0} {1} {2}.".format(host, failmessage, ping)
+          print "-"+message
+          # if nonresponsive-status file does not exists yet, create it and send message
+          if not os.path.isfile(statusfile):
+            os.mknod(statusfile)
+            os.system('{0} "(hostwatcher) {1}"'.format(config.get('main', 'messenger'), message))
+          # if nonresponsive-status older than 24h, delete it to get new message
+          elif time.time()-os.stat(statusfile).st_ctime > 86400:
+            os.remove(statusfile)
 
+        # Host answers and nonresponsive-status file exists 
+        elif os.path.isfile(statusfile):
+          os.remove(statusfile)
+          os.system('{0} "(hostwatcher) {1} answers {2} again!"'.format(config.get('main', 'messenger'), host, ping))
+          print "-{0} answers {1} again!".format(host, ping)
+          break
+        # Host answers 
+        else:
+          print "-{0} answers".format(host)
+          break
 
         
 
