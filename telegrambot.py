@@ -11,7 +11,7 @@
 #       The messages will however only go to the chat_id in the config file
 # Note: Config file is group readable by adm. Restart cron if you've just added your user to adm.
 #
-# USAGE: telegrambot.py "MESSAGE" 
+# USAGE: telegrambot.py "MESSAGE" "LOCAL IMAGE (optional)"
 # (MESSAGE supports markdown) 
 #
 # Fredrik Welander 2016
@@ -28,7 +28,7 @@ except ImportError:
 	print "Unmet dependencies. Install python-requests"
 	exit(1)
 
-usage = 'USAGE: telegrambot.py "MESSAGE"'
+usage = 'USAGE: telegrambot.py "MESSAGE" "LOCAL IMAGE (optional)"'
 hostname = socket.gethostbyaddr(socket.gethostname())[0]
 
 # Init config
@@ -36,10 +36,11 @@ config = ConfigParser.ConfigParser()
 configFile = "/etc/telegrambot.conf"
 
 # Request function
-def botcall(method, token, data={}):
-	response = requests.get(
+def botcall(method, token, params={}, photo={}):
+	response = requests.post(
 		url='https://api.telegram.org/bot{0}/{1}'.format(token, method),
-		params=data
+		params=params,
+		files=photo
 	).json()
 	if not response["ok"]:
 		print "Telegrambot request error: {0} {1}".format(response["error_code"], response["description"])
@@ -103,7 +104,16 @@ token = config.get('main', 'api_token')
 chat_id = config.get('main', 'chat_id')
 message = "[{0}]: {1}".format(hostname, sys.argv[1])
 
-# Request 2/2, send message
-botcall("sendMessage", token, { "chat_id": chat_id, "text": message })
+# Check for possible photo
+if (len(sys.argv) == 3 
+	and os.path.isfile(sys.argv[2]) 
+	and sys.argv[2].lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))):
+	
+	photo = open(sys.argv[2], 'rb')
+	botcall("sendPhoto", token, { "chat_id": chat_id, "caption": message} , { "photo": photo })
+else:
+	# Send message
+	botcall("sendMessage", token, { "chat_id": chat_id, "text": message })
+
 
 
