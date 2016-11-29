@@ -6,6 +6,8 @@ import signal
 import time
 import subprocess
 import glob
+import gtk
+import appindicator
 
 motion = None
 
@@ -20,6 +22,41 @@ for line in motion_config:
         target_dir = line.split(" ", 1)[1].strip()
         break
 
+# Create Ubuntu appindicator
+def create_indicator():
+	indicator = appindicator.Indicator("my-indicator", 'camera-web', appindicator.CATEGORY_APPLICATION_STATUS)
+	indicator.set_status(appindicator.STATUS_ACTIVE)
+	indicator.set_menu(build_menu())
+	gtk.main()
+
+
+
+# Create the indicator menu
+def build_menu():
+	menu = gtk.Menu()
+	for menuitem in [["Motion Control"], ["Open folder", "open_folder"], ["Quit", "quit"]]:
+		cur_item = gtk.MenuItem(menuitem[0])
+		if len(menuitem) > 1:
+			cur_item.connect('activate', menuitem_response, menuitem[1]) # Event listener
+		else:
+			cur_item.set_sensitive(False) # "grayed out"
+
+		menu.append(cur_item)
+	
+	menu.show_all()
+	return menu
+
+# Handle event
+def menuitem_response(self, action):
+	if action == "open_folder":
+		subprocess.call(["/usr/bin/xdg-open", target_dir])
+	elif action == "quit":
+		quit()
+
+
+create_indicator()
+
+# Main loop
 while(True):
     is_locked = subprocess.check_output([
             "qdbus", 
