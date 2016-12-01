@@ -39,10 +39,10 @@ for line in motion_config:
         target_dir = line.split(" ", 1)[1].strip()
         break
 
-
-# Create Ubuntu appindicator
 # Needed for gtk to work with threading
 gtk.threads_init()
+
+# Create Ubuntu appindicator
 def init_indicator():
     logput('init_indicator')
     indicator = appindicator.Indicator("my-indicator", 'camera-web', appindicator.CATEGORY_APPLICATION_STATUS)
