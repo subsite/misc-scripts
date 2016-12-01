@@ -1,5 +1,11 @@
 #!/usr/bin/python
 
+# Starts motion (https://github.com/Motion-Project/motion) when screen is locked. 
+# Sends message with image of detected motion using telegrambot 
+# (https://github.com/subsite/misc-scripts/blob/master/telegrambot.py)
+# 
+# Note: Must be started in a Unity session, put in Startut Applications to launch at login
+# Note: Set "daemon off" in motion.conf
 
 import os
 import signal
@@ -9,25 +15,24 @@ import glob
 import gtk
 import appindicator
 import logging
-import threading # https://pymotw.com/2/threading/
+import threading 
 
-
-
-logging.basicConfig(level=logging.DEBUG,
-                    format='[%(levelname)s] (%(threadName)-10s) %(message)s',
-                    )
-
-def logput(msg):
-    log_msg = msg
-    #logging.debug(msg)
-    # Comment out to disable logging:
-    
+# Set to True to show console ooutput for debug 
+log_to_console = False
 
 # Read motion.conf
 motion_config = open(os.path.expanduser('~/.motion/motion.conf'))
 statusfile = os.path.expanduser('~/.motion/EVENT_END')
 
+# Set logging params
+logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] (%(threadName)-10s) %(message)s',)
 
+###########
+
+def logput(msg):
+    if log_to_console:
+        logging.debug(msg)
+    
 # Get target_dir from motion.conf
 for line in motion_config:
     if line.startswith("target_dir"):
