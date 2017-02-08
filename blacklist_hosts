@@ -29,6 +29,9 @@ if [[ "$BLACKLIST_LINES"  -lt "$BLACKLIST_MINLINES" ]]; then
     echo "Blacklist not valid: less than $BLACKLIST_MINLINES lines."; exit;
 fi
 
+# Comment out possible spoof attempts, only allowing lines starting with 0.0.0.0 or 127.0.0.1
+sed -ri '/^[[:blank:]]*0.0.0.0|^[[:blank:]]*127.0.0.1|^#|^\s*$/! s/^/#SPOOF /g' $TEMPFILE
+
 # Whitelist hosts by adding comment #WHITELIST to the lines
 for i in "${WHITELIST[@]}"
 do
