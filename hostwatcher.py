@@ -40,7 +40,7 @@ for ping, hosts in host_types:
         # host doesn't answer on first try
         if response != 0 and i == 0:
           # wait seconds before retry
-          time.sleep(5)
+          time.sleep(10)
         # host doesn't answer on second try
         elif response != 0:
           message = "{0} {1} {2}.".format(host, failmessage, ping)
