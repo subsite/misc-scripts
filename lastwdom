@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Exit 0 if today is last working day of month
+# Usage lw && command_to_run_only_on_last_workday
+
+year=$(date +%Y)
+month=$(date +%m)
+day=$(date +%d)
+
+lastdom=`date -d "$year/$month/1 + 1 month - 1 day" "+%d"`
+dow=`date -d "$year/$month/1 + 1 month - 1 day" "+%u"`
+
+if [ $dow -ge 6 ] 
+then
+        lastwdom=$(($lastdom - $dow + 5))
+else
+        lastwdom=$(($lastdom))
+fi
+
+if [ $day -eq $lastwdom ]
+then
+	#echo "$day is last wd of month"
+	exit 0
+else
+	#echo "$day is not last wd of month ($lastwdom)"
+	exit 1
+fi
+
+
+
