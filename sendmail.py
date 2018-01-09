@@ -96,7 +96,7 @@ for to_addrs in email_list:
 
         for file in file_list:
             cover_letter = MIMEApplication(open(file, "rb").read())
-            cover_letter.add_header('Content-Disposition', 'attachment', filename=file)
+            cover_letter.add_header('Content-Disposition', 'attachment', filename=file.split("/")[-1])
             msg.attach(cover_letter)
 
 
