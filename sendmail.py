@@ -5,7 +5,7 @@
 # Mostly stolen from gist https://gist.github.com/srv89/1d3dac6672895f5ca65f
 #
 # Usage (required params):    sendmail.py to=[to_addr] subject="Subject"
-# Usage (all possible params: sendmail.py to=[to_addr] subject="Subject" body="Message body" attach=path/to/folder/|/path/to/file.ext
+# Usage (all possible params: sendmail.py to="to_addr[,to_addr...]" subject="Subject" body="Message body" attach=path/to/folder/|/path/to/file.ext
 #
 # Attach can be one of the following:
 # /path/to/folder/ # will attach everything from this folder (end with /)
@@ -89,16 +89,28 @@ for to_addrs in email_list:
     if attach is not None:
         file_list = []
         if attach.strip()[-1] == "/":
-            for filename in os.listdir(attach):
-                file_list.append(attach.strip()+filename)
+            try:
+                for filename in os.listdir(attach):
+                    file_list.append(attach.strip()+filename)
+            except:
+                sys.exit("Attachment directory {} not found.".format(attach))
         else:
             file_list = [ attach ]
 
+        if len(file_list) == 0:
+            sys.exit("No attachments found in directory")
+
+        #sys.exit(file_list.count())
+
         for file in file_list:
+            try:
+                open(file)
+            except:
+                sys.exit("Attachment file {} not found.".format(file))
+
             cover_letter = MIMEApplication(open(file, "rb").read())
             cover_letter.add_header('Content-Disposition', 'attachment', filename=file.split("/")[-1])
             msg.attach(cover_letter)
-
 
     try:
         send_mail(username, password, from_addr, to_addrs, msg)
