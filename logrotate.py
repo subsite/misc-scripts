@@ -25,7 +25,6 @@ cursize = os.path.getsize(logfile) / 1000000
 if cursize > float(maxsize):
 
     for i in range(default_saves-1,0,-1):
-        print(i)
         try:
             shutil.copy2("{}.{}".format(logfile, i-1), "{}.{}".format(logfile, i))
         except:
