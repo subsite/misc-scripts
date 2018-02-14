@@ -19,18 +19,20 @@ maxsize = sys.argv[2] if len(sys.argv) > 2 else default_size
 if not os.path.isfile(logfile):
     exit("No logfile found.")
 
-cursize = round(os.path.getsize(logfile) / 1000000)
+cursize = os.path.getsize(logfile) / 1000000
 
 
-for i in range(default_saves,0,-1):
-    print(i)
-    try:
-        shutil.copy2("{}.{}".format(logfile, i-1), "{}.{}".format(logfile, i))
-    except:
-        print("{}.{} Not found.".format(logfile, i))
+if cursize > float(maxsize):
 
-    if i == 1:
-        shutil.copy2(logfile, "{}.0".format(logfile))
-        open(logfile, 'w').close()
+    for i in range(default_saves-1,0,-1):
+        print(i)
+        try:
+            shutil.copy2("{}.{}".format(logfile, i-1), "{}.{}".format(logfile, i))
+        except:
+            pass
+            
+        if i == 1:
+            shutil.copy2(logfile, "{}.0".format(logfile))
+            open(logfile, 'w').close()
 
 
