@@ -30,8 +30,10 @@ for ping, hosts in host_types:
       # Try ping 2 times, break if host answers
       for i in range(2):
         print "{0} {1} try {2}".format(ping, host, i+1)
-        if ping == "http":
-          response =  os.system("nc -z -w2 " + host + " 80")
+        # test http/https
+        if ping[:4] == "http":
+          response =  os.system("nc -z -w2 " + host + " " + ping)   
+        # test ping     
         else:
           response = os.system(ping + " -c 1 -w 2 " + host + " > /dev/null 2>&1")
         
