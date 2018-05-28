@@ -31,7 +31,7 @@ conf_file = "/etc/sendmail_py.json"
 #
 
 if len(sys.argv) < 2:
-    sys.exit('USAGE: sendmail.py to=to_addr subject="Subject" [ body="Message body" attach=path/to/folder/|/path/to/file.ext ]')
+    sys.exit('USAGE: sendmail.py to=to_addr subject="Subject" [ from=from_addr body="Message body" attach=path/to/folder/|/path/to/file.ext ]')
 
 params = {}
 for arg in sys.argv[1:]:
@@ -49,7 +49,7 @@ username = conf['username']  # Email Address from the email you want to send an 
 password = conf['password']  # Password
 
 
-from_addr = username
+from_addr = params['from'] if 'from' in params else username
 email_list = params['to'].split(',')
 subj = params['subject']
 html = params['body'] if 'body' in params else subj
