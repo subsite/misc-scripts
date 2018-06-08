@@ -10,6 +10,7 @@
 # Attach can be one of the following:
 # /path/to/folder/ # will attach everything from this folder (end with /)
 # /path/to/file.ext # will attach only thif file
+# NOTE: mail will not be sent if attach is defined but file not found
 
 import os, sys
 import smtplib
