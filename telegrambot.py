@@ -30,7 +30,7 @@ import configparser
 try:
 	import requests
 except ImportError:
-	print("Unmet dependencies. Install python-requests")
+	print("Unmet dependencies. Install python3-requests")
 	exit(1)
 
 usage = 'USAGE: telegrambot.py [--setup] "MESSAGE" "LOCAL IMAGE (optional)"'
@@ -100,12 +100,10 @@ if not read_config or (len(sys.argv) == 2 and sys.argv[1] == "--setup"):
 	#os.chmod(configFile, "o-r")
 	subprocess.call(["chmod", "o-r", configFile])
 
-
 	print("Config file {} created.".format(configFile))
 	print("Setup complete.")
 	print(usage)
 	exit(0)
-
 
 # Check for correct amount of args
 if len(sys.argv) < 2:
