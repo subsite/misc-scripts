@@ -29,7 +29,7 @@ for ping, hosts in host_types:
     for host in json.loads(hosts):
       # Try ping 2 times, break if host answers
       for i in range(2):
-        print "{0} {1} try {2}".format(ping, host, i+1)
+        print("{0} {1} try {2}".format(ping, host, i+1))
         # test http/https
         if ping[:4] == "http":
           response =  os.system("nc -z -w2 " + host + " " + ping)   
@@ -46,7 +46,7 @@ for ping, hosts in host_types:
         # host doesn't answer on second try
         elif response != 0:
           message = "{0} {1} {2}.".format(host, failmessage, ping)
-          print "-"+message
+          print("-"+message)
           # if nonresponsive-status file does not exists yet, create it and send message
           if not os.path.isfile(statusfile):
             os.mknod(statusfile)
