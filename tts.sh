@@ -9,7 +9,9 @@ if [ $# -lt 1 ]; then
 fi
 
 TEMPFILE="/tmp/ttsoutput.wav"
-TEXTFILE="$(cat $1)"
+TEXTFILE=$1
 
-pico2wave -w=$TEMPFILE "${TEXTFILE}"
+#pico2wave -w=$TEMPFILE "$(cat $TEXTFILE)"
+mimic -f ${1} -o $TEMPFILE -voice slt
+
 vlc $TEMPFILE

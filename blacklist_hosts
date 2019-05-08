@@ -14,7 +14,7 @@ TEMPFILE="/tmp/hosts_blacklist.tmp"
 # Minimum accepted line count of blacklist
 BLACKLIST_MINLINES=5000
 # Whitelist hosts containing these substrings
-WHITELIST=( "google-analytics" "analytics.google" )
+WHITELIST=( "google-analytics" "analytics.google" "googletagmanager.com" )
 #
 ##### CONF END ######
 
