@@ -46,6 +46,9 @@ configFileGlobal = "/etc/telegrambot.conf"
 def botcall(method, token, params={}, photo={}):
 	url = "https://api.telegram.org/bot{0}/{1}".format(token, method)
 	#print("{} params:{}".format(url, str(params)))
+
+	params['disable_web_page_preview'] = True
+	
 	response = requests.post(
 		url=url,
 		params=params,
