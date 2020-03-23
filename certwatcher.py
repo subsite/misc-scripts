@@ -23,7 +23,7 @@ import subprocess
 configFile = "/etc/hostwatcher.conf"
 warning_days = 14
 failmessage = "SSL-certificate expiring in {} days or less:".format(warning_days) 
-cert_checker = ["ssl-cert-check", "-p", "443", "-n", "-q", "-x", str(warning_days), "-s"]
+cert_checker = ["/usr/bin/ssl-cert-check", "-p", "443", "-n", "-q", "-x", str(warning_days), "-s"]
 #
 ########### 
 
@@ -48,6 +48,6 @@ for host in ssl_hosts:
   
 if cert_alert:
   print(failmessage)
-  subprocess.call([messenger, failmessage + ("certwatcher")])
+  subprocess.call([messenger, failmessage + " (certwatcher)"])
         
 
