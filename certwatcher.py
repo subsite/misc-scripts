@@ -48,6 +48,6 @@ for host in ssl_hosts:
   
 if cert_alert:
   print(failmessage)
-  subprocess.call([messenger, failmessage + ("certwatcher")])
+  subprocess.call([messenger, failmessage + " (certwatcher)"])
         
 
