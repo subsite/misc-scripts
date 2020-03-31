@@ -45,6 +45,9 @@ for host in ssl_hosts:
   if cert_check.returncode:
     cert_alert = True
     failmessage = "{} {}".format(failmessage,host)
+    print(failmessage)
+  else:
+    print("Host {} valid SSL-cert".format(host))
   
 if cert_alert:
   print(failmessage)
